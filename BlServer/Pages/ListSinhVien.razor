@@ -1,0 +1,60 @@
+﻿@page "/listsinhvien"
+@using BlServer.Services;
+@using global::Shared;
+@inject ISinhVienService sinhVienService
+@inject NavigationManager Navigation
+
+@if(listSV != null)
+{
+    <h3>ListSinhVien</h3>
+
+    <a href="create" style="text-decoration:none; color:black">
+        <button>Create</button>
+    </a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Age</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var sv in listSV)
+            {
+                <tr>
+                    <td>@sv.Id</td>
+                    <td>@sv.Name</td>
+                    <td>@sv.Age</td>
+                    <td>
+                        <a href="edit/@sv.Id" style="text-decoration:none; color:black">
+                            <button>Edit</button>
+                        </a>
+                        <button @onclick="() => Delete(sv.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private List<SinhVien> listSV;
+
+    protected override async Task OnInitializedAsync()
+    {
+        listSV = await sinhVienService.GetAll();
+    }
+
+    protected async Task Delete(Guid id)
+    {
+        await sinhVienService.Delete(id);
+        Navigation.NavigateTo("/listsinhvien", true);
+    }
+}

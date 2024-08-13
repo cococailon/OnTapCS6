@@ -1,0 +1,26 @@
+﻿@page "/upload"
+
+<h3>Upload</h3>
+
+<InputFile OnChange="FileSelected"></InputFile>
+<br />
+<br />
+<button @onclick="UploadFile"></button>
+
+@code {
+    private IBrowserFile file;
+
+    private async Task FileSelected(InputFileChangeEventArgs e)
+    {
+        file = e.File;
+    }
+
+    private async Task UploadFile()
+    {
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", file.Name);
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+    }
+}

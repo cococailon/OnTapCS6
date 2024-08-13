@@ -1,0 +1,40 @@
+﻿@page "/edit/{id:guid}"
+@using global::Shared;
+@using BlServer.Services;
+@inject ISinhVienService svService
+@inject NavigationManager Navigation
+
+<h3>Edit</h3>
+
+@if (sinhVien != null)
+{
+    <EditForm Model="sinhVien" OnValidSubmit="EditSV">
+        <label>Name</label>
+        <InputText @bind-Value="sinhVien.Name"></InputText>
+        <br/>
+        <label>Age</label>
+        <InputNumber @bind-Value="sinhVien.Age"></InputNumber>
+        <br/>
+        <button type="submit">Submit</button>
+    </EditForm>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private SinhVien sinhVien;
+
+    [Parameter] public Guid id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        sinhVien = await svService.GetByID(id);
+    }
+
+    protected async Task EditSV(){
+        await svService.Update(sinhVien);
+        Navigation.NavigateTo("/listsinhvien");
+    }
+}
